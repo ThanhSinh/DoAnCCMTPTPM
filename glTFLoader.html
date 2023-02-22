@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GLTF Loader</title>
+    <script type="text/javascript" src="js/three.js"></script>
+    <script type="text/javascript" src="js/OrbitControls.js"></script>
+    <script type="text/javascript" src="js/DragControls.js"></script>
+    <script type="text/javascript" src="js/TrackballControls.js"></script>
+    <!-- <script type="text/javascript" src="js/GLTFLoader.js"></script> -->
+    <script src="three.js-master/examples/jsm/loaders/GLTFLoader.js">
+       
+
+    </script>
+    
+</head>
+<body id="body">
+
+    <script type="text/javascript">
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        /* because when resize browser, no thing re-render => make your scene not resiz after resize browser
+            So, after render dom Element, we need to watch the change of viewport
+        */
+        window.addEventListener('resize', function() {
+            var width = window.innerWidth;
+            var height = window.innerHeight;
+            renderer.setSize(width, height);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        });
+
+        camera.position.z = 10;
+        camera.position.y = 40;
+        camera.position.x = -3;
+
+        var loader = new THREE.GLTFLoader();
+
+        loader.load(
+            //model here
+            'models/scene.gltf',
+            (gltf) => {
+                const root = gltf.scene;
+                scene.add(root);
+            }
+        );
+
+        var light = new THREE.DirectionalLight( 0xffffff );
+        light.position.set(5, 50, 10);
+        scene.add(light);
+
+        //game login
+        var update = function() {};
+
+        // draw scene
+        var render = function() {
+            renderer.render(scene, camera);
+        };
+
+        //run gameloop (update, render, repeat)
+        var GameLoop = function() {
+            requestAnimationFrame(GameLoop);
+            update();
+            render();
+            controls.update();
+        };
+
+        // for Trackball
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+
+        GameLoop();
+
+        scene.background = new THREE.Color( 'skyblue' );
+
+
+    </script>
+</body>
+<style type="text/css">
+    body {
+        margin: 0;
+    }
+    canvas {
+        width: 100%;
+        height: 100%;
+    }
+</style>
+</html>
